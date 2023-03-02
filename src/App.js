@@ -4,6 +4,8 @@ import Item from "./components/Item";
 import FavItem from "./components/FavItem";
 import { useDispatch, useSelector } from "react-redux";
 import { addFav, fetchAnother } from "./actions";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function App() {
   const dispatch = useDispatch();
@@ -11,9 +13,12 @@ export default function App() {
   const current = useSelector((depo) => depo.current);
   const favs = useSelector((depo) => depo.favs);
 
-  function addToFavs() {
+  const addToFavs = () => {
     dispatch(addFav(current));
-  }
+    toast.success("Favorilere başarıyla eklendi!", {
+      position: toast.POSITION.TOP_CENTER,
+    });
+  };
 
   return (
     <div className="wrapper max-w-xl mx-auto px-4">
@@ -50,11 +55,13 @@ export default function App() {
               Başka bir tane
             </button>
             <button
-              onClick={() => dispatch(addFav(current))}
+              onClick={addToFavs}
               className="select-none px-4 py-2 bg-blue-700 hover:bg-blue-600 text-white"
             >
               Favorilere ekle
             </button>
+
+            <ToastContainer />
           </div>
         </Route>
 
