@@ -1,9 +1,9 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Switch, Route, NavLink } from "react-router-dom";
 import Item from "./components/Item";
 import FavItem from "./components/FavItem";
 import { useDispatch, useSelector } from "react-redux";
-import { addFav, fetchAnother } from "./actions";
+import { addFav, fetchAnother, getFavsFromLocalStorage } from "./actions";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -13,10 +13,15 @@ export default function App() {
   const current = useSelector((depo) => depo.current);
   const favs = useSelector((depo) => depo.favs);
 
+  useEffect(() => {
+    dispatch(fetchAnother());
+    dispatch(getFavsFromLocalStorage());
+  }, []);
+
   const addToFavs = () => {
     dispatch(addFav(current));
     toast.success("Favorilere başarıyla eklendi!", {
-      position: toast.POSITION.TOP_CENTER,
+      position: toast.POSITION.TOP_RIGHT,
     });
   };
 

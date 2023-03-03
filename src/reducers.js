@@ -1,3 +1,4 @@
+import { act } from "react-dom/test-utils";
 import {
   FAV_ADD,
   FAV_REMOVE,
@@ -14,8 +15,8 @@ const initial = {
   loading: true,
 };
 
-function writeFavsToLocalStorage(state) {
-  localStorage.setItem("favs", JSON.stringify(state.favs));
+function writeFavsToLocalStorage(item) {
+  localStorage.setItem("favs", JSON.stringify(item));
 }
 
 function readFavsFromLocalStorage() {
@@ -26,6 +27,7 @@ export function myReducer(state = initial, action) {
   switch (action.type) {
     case FAV_ADD:
       if (!state.favs.find((item) => item.id === action.payload.id)) {
+        writeFavsToLocalStorage([...state.favs, action.payload]);
         return {
           ...state,
           favs: [...state.favs, action.payload],
@@ -35,9 +37,13 @@ export function myReducer(state = initial, action) {
       }
 
     case FAV_REMOVE:
+      const filteredFavorites = state.favs.filter(
+        (item) => action.payload !== item.id
+      );
+      localStorage.setItem("favs", JSON.stringify(filteredFavorites));
       return {
         ...state,
-        favs: state.favs.filter((fav) => action.payload !== fav.id),
+        favs: filteredFavorites,
       };
 
     case FETCH_SUCCESS:
@@ -59,7 +65,10 @@ export function myReducer(state = initial, action) {
       };
 
     case GET_FAVS_FROM_LS:
-      return state;
+      return {
+        ...state,
+        favs: readFavsFromLocalStorage(state.current),
+      };
 
     default:
       return state;
